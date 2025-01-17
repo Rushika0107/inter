@@ -1,8 +1,10 @@
-import { TrendingUp, Clock } from "lucide-react";
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
+import { TrendingUp, Clock } from "lucide-react";
 import { Swiper, SwiperSlide } from "swiper/react";
+import { Navigation } from "swiper/modules";
 import "swiper/css";
+import "swiper/css/navigation";
 
 const TMDB_API_KEY = "859afbb4b98e3b467da9c99ac390e950";
 const TMDB_API_URL = "https://api.themoviedb.org/3";
@@ -91,6 +93,7 @@ const MovieCarousel = () => {
         Trending Now
       </h2>
       <Swiper
+        modules={[Navigation]}
         spaceBetween={10}
         slidesPerView={visibleMovies}
         loop={true}
@@ -116,6 +119,7 @@ const MovieCarousel = () => {
         Coming Soon
       </h2>
       <Swiper
+        modules={[Navigation]}
         spaceBetween={10}
         slidesPerView={visibleMovies}
         loop={true}

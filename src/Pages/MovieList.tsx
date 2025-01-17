@@ -1,4 +1,4 @@
-import { SlidersHorizontal, Star, X } from "lucide-react";
+import { SlidersHorizontal, Star, X, Grid, List } from "lucide-react";
 import React, { useState, useEffect } from "react";
 import { Link, useSearchParams } from "react-router-dom";
 
@@ -13,6 +13,7 @@ const MovieList = () => {
   const [selectedYear, setSelectedYear] = useState<string | null>(null);
   const [ratingRange, setRatingRange] = useState<[number, number]>([0, 10]);
   const [showFilters, setShowFilters] = useState<boolean>(false);
+  const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
 
   useEffect(() => {
     const fetchData = async () => {
@@ -37,7 +38,7 @@ const MovieList = () => {
             image: `https://image.tmdb.org/t/p/w500/${movie.poster_path}`,
             year: new Date(movie.release_date).getFullYear(),
             genre: movie.genre_ids,
-            videoUrl: `https://www.youtube.com/embed/${movie.id}`,
+            description: movie.overview,
           }))
         );
 
@@ -98,18 +99,29 @@ const MovieList = () => {
 
   return (
     <div className="container mx-auto px-4 py-8">
+      {/* Header */}
       <div className="flex flex-col md:flex-row justify-between items-center mb-8">
         <h1 className="text-3xl font-semibold text-gray-100 mb-4 md:mb-0">
           {search ? `Search Results for "${search}"` : "Popular Movies"}
         </h1>
-        <button
-          className="flex items-center gap-2 bg-gray-800 text-white px-4 py-2 rounded-lg hover:bg-gray-700 transition"
-          onClick={() => setShowFilters(!showFilters)}
-        >
-          <SlidersHorizontal /> Filters
-        </button>
+        <div className="flex items-center gap-4">
+          <button
+            className="flex items-center gap-2 bg-gray-800 text-white px-4 py-2 rounded-lg hover:bg-gray-700 transition"
+            onClick={() => setShowFilters(!showFilters)}
+          >
+            <SlidersHorizontal /> Filters
+          </button>
+          <button
+            className="flex items-center gap-2 bg-gray-800 text-white px-4 py-2 rounded-lg hover:bg-gray-700 transition"
+            onClick={() => setViewMode(viewMode === "grid" ? "list" : "grid")}
+          >
+            {viewMode === "grid" ? <List /> : <Grid />}
+            {viewMode === "grid" ? "List View" : "Grid View"}
+          </button>
+        </div>
       </div>
 
+      {/* Filters */}
       {showFilters && (
         <div className="mb-4">
           <button
@@ -178,36 +190,69 @@ const MovieList = () => {
         </div>
       )}
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8">
-        {filteredMovies.map((movie) => (
-          <Link key={movie.id} to={`/movie/${movie.id}`}>
+      {/* Movies */}
+      <div
+        className={`${
+          viewMode === "grid"
+            ? "grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8"
+            : "flex flex-col gap-4"
+        }`}
+      >
+        {filteredMovies.map((movie) =>
+          viewMode === "grid" ? (
+            <Link key={movie.id} to={`/movie/${movie.id}`}>
+              <div className="bg-gray-800 rounded-xl overflow-hidden hover:scale-105 transition-transform duration-300">
+                <div className="relative aspect-video group">
+                  <img
+                    src={movie.image}
+                    alt={movie.title}
+                    className="w-full h-full object-cover group-hover:opacity-80 transition-opacity duration-300"
+                  />
+                  <div className="absolute top-4 right-4 bg-black/60 backdrop-blur-md px-2 py-1 rounded-md flex items-center gap-1">
+                    <Star className="w-4 h-4 text-yellow-500" />
+                    <span className="text-yellow-500 font-medium">
+                      {movie.rating.toFixed(1)}
+                    </span>
+                  </div>
+                </div>
+                <div className="p-4">
+                  <h2 className="text-xl font-semibold text-white mb-2">
+                    {movie.title}
+                  </h2>
+                  <span className="text-gray-400 text-sm">{movie.year}</span>
+                </div>
+              </div>
+            </Link>
+          ) : (
             <div
-              className="bg-gray-800 rounded-xl overflow-hidden hover:scale-105 transition-transform duration-300"
-              onMouseEnter={() => handleMouseEnter(movie.id)}
-              onMouseLeave={handleMouseLeave}
+              key={movie.id}
+              className="flex gap-4 p-4 bg-gray-800 rounded-xl hover:bg-gray-700 transition"
             >
-              <div className="relative aspect-video group">
-                <img
-                  src={movie.image}
-                  alt={movie.title}
-                  className="w-full h-full object-cover group-hover:opacity-80 transition-opacity duration-300"
-                />
-                <div className="absolute top-4 right-4 bg-black/60 backdrop-blur-md px-2 py-1 rounded-md flex items-center gap-1">
+              <img
+                src={movie.image}
+                alt={movie.title}
+                className="w-32 h-48 object-cover rounded-lg"
+              />
+              <div className="flex flex-col justify-between">
+                <div>
+                  <h2 className="text-xl font-semibold text-white mb-2">
+                    {movie.title}
+                  </h2>
+                  <p className="text-gray-300 text-sm mb-2">
+                    {movie.description}
+                  </p>
+                </div>
+                <div className="flex items-center gap-2">
                   <Star className="w-4 h-4 text-yellow-500" />
                   <span className="text-yellow-500 font-medium">
                     {movie.rating.toFixed(1)}
                   </span>
+                  <span className="text-gray-400">({movie.year})</span>
                 </div>
               </div>
-              <div className="p-4">
-                <h2 className="text-xl font-semibold text-white mb-2">
-                  {movie.title}
-                </h2>
-                <span className="text-gray-400 text-sm">{movie.year}</span>
-              </div>
             </div>
-          </Link>
-        ))}
+          )
+        )}
       </div>
     </div>
   );

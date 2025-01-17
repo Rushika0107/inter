@@ -20,7 +20,7 @@
     "react-scripts": "5.0.1",
     "react-slick": "^0.30.3",
     "slick-carousel": "^1.8.1",
-    "swiper": "^11.2.0",
+    "swiper": "^11.2.1",
     "web-vitals": "^2.1.4"
   },
   "scripts": {
@@ -48,6 +48,7 @@
     ]
   },
   "devDependencies": {
+    "@babel/plugin-proposal-private-property-in-object": "^7.21.11",
     "@types/firebase": "^2.4.32",
     "tailwindcss": "^3.4.15"
   }
