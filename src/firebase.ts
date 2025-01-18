@@ -5,12 +5,13 @@ import { getFirestore } from 'firebase/firestore'; // Import Firestore
 import { getStorage } from 'firebase/storage'; // Import Firebase Storage
 
 const firebaseConfig = {
-  apiKey: "AIzaSyD6mg2L4h1K02mFgBgK8Ij8zfFzNMHoNUw",
-  authDomain: "caress-d79cd.firebaseapp.com",
-  projectId: "caress-d79cd",
-  storageBucket: "caress-d79cd.firebasestorage.app",
-  messagingSenderId: "474793383523",
-  appId: "1:474793383523:web:7221fc3369298369604a56"
+  apiKey: "AIzaSyACmkmZdy9aphqqsrbg9fhamW6MV5dlx8Q",
+  authDomain: "imdb-clone-80c76.firebaseapp.com",
+  projectId: "imdb-clone-80c76",
+  storageBucket: "imdb-clone-80c76.firebasestorage.app",
+  messagingSenderId: "425795171500",
+  appId: "1:425795171500:web:31854e73cca208764c9b09",
+  measurementId: "G-W6FEE8ZS92"
 };
 
 const firebaseApp = initializeApp(firebaseConfig);
