@@ -177,6 +177,10 @@ const ProfilePage = () => {
       setIsLoading(false);
     }
   };
+  const handleMovieClick = (movieId) => {
+    console.log(`/movie/ ${movieId}`);
+    
+  };
 
   const handleLogout = () => {
     const auth = getAuth();
@@ -192,6 +196,8 @@ const ProfilePage = () => {
   const handleRecommendationClick = (movieId: string) => {
     navigate(`/movie/${movieId}`);
   };
+
+  
 
   return (
     <div className="profile-page bg-black text-white min-h-screen p-6">
@@ -240,8 +246,6 @@ const ProfilePage = () => {
   </div>
 </div>
 
-
-
           {/* Preferences Section */}
           <div className="preferences mb-8">
             <h2 className="text-2xl font-semibold mb-4">Preferences</h2>
@@ -272,23 +276,7 @@ const ProfilePage = () => {
               </button>
             </div>
           </div>
-
-          {/* Reviews Section */}
-          <div className="reviews-section mb-8">
-            <h2 className="text-2xl font-semibold mb-4">Your Reviews</h2>
-            <ReviewList userId={user?.uid} />
-          </div>
-
-          <button
-            onClick={handleLogout}
-            className="mt-4 bg-red-500 px-8 py-3 rounded-lg hover:bg-red-600 w-full"
-          >
-            Logout
-          </button>
-        </div>
-
-        {/* Right Sidebar: Rated Movies, Watchlist, and Recommendations */}
-        <div className="right-section flex-1">
+        
          {/* Rated Movies Section */}
 <div className="rated-movies mb-8">
   <h2 className="text-2xl font-semibold mb-4">Your Rated Movies</h2>
@@ -310,26 +298,46 @@ const ProfilePage = () => {
 
           {/* Watchlist Section */}
           <div className="watchlist mb-8">
-            <h2 className="text-2xl font-semibold mb-4">Your Watchlist</h2>
-            <div className="flex flex-wrap gap-4">
-              {watchlist.length === 0 ? (
-                <p className="text-gray-500">No movies in watchlist yet</p>
-              ) : (
-                watchlist.map((movie) => (
-                  <div key={movie.id} className="text-center">
-                    <img src={movie.posterPath} alt={movie.title} className="w-24 h-32" />
-                    <p>{movie.title}</p>
-                    <button
-                      onClick={() => handleRemoveFromWatchlist(movie.id)}
-                      className="text-red-500 mt-2"
-                    >
-                      Remove
-                    </button>
-                  </div>
-                ))
-              )}
-            </div>
+  <h2 className="text-2xl font-semibold mb-4">Your Watchlist</h2>
+  <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+    {watchlist.length === 0 ? (
+      <p className="text-gray-500">No movies in watchlist yet</p>
+    ) : (
+      watchlist.map((movie) => (
+        <div 
+          key={movie.id} 
+          className="cursor-pointer bg-white rounded-2xl shadow-md p-4 hover:shadow-lg transition-shadow"
+          onClick={() => handleMovieClick(movie.id)} // Replace with your movie detail logic
+        >
+          <img 
+            src={movie.posterPath} 
+            alt={movie.title} 
+            className="w-full h-48 object-cover rounded-md mb-4" 
+          />
+          <h3 className="text-lg font-medium truncate mb-2">{movie.title}</h3>
+          <div className="flex justify-between items-center">
+            <button
+              onClick={(e) => {
+                e.stopPropagation(); // Prevent triggering the card click
+                handleRemoveFromWatchlist(movie.id);
+              }}
+              className="text-red-500 hover:text-red-700 text-sm"
+            >
+              Remove
+            </button>
+           
           </div>
+        </div>
+      ))
+    )}
+  </div>
+</div>
+
+<script>
+ 
+</script>
+
+
 
           {/* Recommendations Section */}
           {showRecommendations && recommendations.length > 0 && (
@@ -362,8 +370,15 @@ const ProfilePage = () => {
               {showRecommendations ? 'Hide Recommendations' : 'See Recommendations'}
             </button>
           </div>
+          <button
+            onClick={handleLogout}
+            className="mt-4 bg-red-500 px-8 py-3 rounded-lg hover:bg-red-600 w-full"
+          >
+            Logout
+          </button>
         </div>
       </div>
+      
     </div>
   );
 };

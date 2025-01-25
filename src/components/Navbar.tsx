@@ -83,6 +83,27 @@ const Navbar = ({ toggleTheme, theme }) => {
           <Film className="w-8 h-8 text-yellow-400" />
           <span className="text-3xl font-bold">MovieDB</span>
         </Link>
+        <button
+  onClick={toggleTheme}
+  className={`ml-4 px-4 py-2 border rounded-full flex items-center gap-2 
+    ${
+      theme === "dark"
+        ? "bg-gray-800 text-yellow-300 hover:bg-gray-700 border-yellow-300"
+        : "bg-yellow-400 text-gray-900 hover:bg-yellow-500 border-yellow-500"
+    } transition-all duration-300 shadow-md hover:shadow-lg transform hover:scale-105`}
+>
+  {theme === "dark" ? (
+    <>
+      
+      <span>Light Mode</span>
+    </>
+  ) : (
+    <>
+      <span>Dark Mode</span>
+    </>
+  )}
+</button>
+
   
         {/* Mobile Menu Button */}
         <div className="md:hidden">
@@ -163,45 +184,7 @@ const Navbar = ({ toggleTheme, theme }) => {
               </ul>
             )}
           </form>
-          <button
-  onClick={toggleTheme}
-  className={`ml-4 px-4 py-2 border rounded-full flex items-center gap-2 
-    ${
-      theme === "dark"
-        ? "bg-gray-800 text-yellow-300 hover:bg-gray-700 border-yellow-300"
-        : "bg-yellow-400 text-gray-900 hover:bg-yellow-500 border-yellow-500"
-    } transition-all duration-300 shadow-md hover:shadow-lg transform hover:scale-105`}
->
-  {theme === "dark" ? (
-    <>
-      <svg
-        xmlns="http://www.w3.org/2000/svg"
-        className="h-5 w-5"
-        viewBox="0 0 20 20"
-        fill="currentColor"
-      >
-        <path
-          d="M10 2a1 1 0 100 2 6 6 0 000 12 1 1 0 100 2 8 8 0 110-16z"
-        />
-      </svg>
-      <span>Light Mode</span>
-    </>
-  ) : (
-    <>
-      <svg
-        xmlns="http://www.w3.org/2000/svg"
-        className="h-5 w-5"
-        viewBox="0 0 20 20"
-        fill="currentColor"
-      >
-        <path
-          d="M10 3a7 7 0 100 14 7 7 0 000-14zm0 2a5 5 0 110 10A5 5 0 0110 5z"
-        />
-      </svg>
-      <span>Dark Mode</span>
-    </>
-  )}
-</button>
+          
 
           
           {/* Navbar Links */}

@@ -1,5 +1,5 @@
 import { SlidersHorizontal, Star, X, Grid, List } from "lucide-react";
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import { Link, useSearchParams } from "react-router-dom";
 
 const MovieList = () => {
@@ -12,8 +12,10 @@ const MovieList = () => {
   const [selectedGenres, setSelectedGenres] = useState<Set<number>>(new Set());
   const [selectedYear, setSelectedYear] = useState<string | null>(null);
   const [ratingRange, setRatingRange] = useState<[number, number]>([0, 10]);
+  const [customFilters, setCustomFilters] = useState<string[]>([]);
   const [showFilters, setShowFilters] = useState<boolean>(false);
   const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
+  const [inputValue, setInputValue] = useState<string>("");
 
   useEffect(() => {
     const fetchData = async () => {
@@ -51,14 +53,6 @@ const MovieList = () => {
     fetchData();
   }, []);
 
-  const handleMouseEnter = (index: number) => {
-    setHoveredIndex(index);
-  };
-
-  const handleMouseLeave = () => {
-    setHoveredIndex(null);
-  };
-
   const handleChipClick = (genreId: number) => {
     const updatedGenres = new Set(selectedGenres);
     if (updatedGenres.has(genreId)) {
@@ -69,33 +63,45 @@ const MovieList = () => {
     setSelectedGenres(updatedGenres);
   };
 
-  const handleYearClick = (year: string) => {
-    setSelectedYear(year === selectedYear ? null : year);
-  };
-
   const handleClearFilters = () => {
     setSelectedGenres(new Set());
     setSelectedYear(null);
     setRatingRange([0, 10]);
+    setCustomFilters([]);
   };
 
-  const handleRatingClick = (rating: number, isMin: boolean) => {
-    if (isMin) {
-      setRatingRange([rating, ratingRange[1]]);
-    } else {
-      setRatingRange([ratingRange[0], rating]);
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setInputValue(e.target.value);
+  };
+
+  const handleInputSubmit = () => {
+    if (inputValue.trim() && !customFilters.includes(inputValue.trim())) {
+      setCustomFilters([...customFilters, inputValue.trim()]);
+      setInputValue("");
     }
   };
 
-  const filteredMovies = movies.filter((movie) => {
-    const genreMatch =
-      selectedGenres.size === 0 || movie.genre.some((id: number) => selectedGenres.has(id));
-    const yearMatch = !selectedYear || movie.year.toString() === selectedYear;
-    const ratingMatch =
-      movie.rating >= ratingRange[0] && movie.rating <= ratingRange[1];
+  const handleRemoveChip = (filter: string) => {
+    setCustomFilters(customFilters.filter((item) => item !== filter));
+  };
 
-    return genreMatch && yearMatch && ratingMatch;
-  });
+  const filteredMovies = useMemo(() => {
+    return movies.filter((movie) => {
+      const genreMatch =
+        selectedGenres.size === 0 || movie.genre.some((id: number) => selectedGenres.has(id));
+      const yearMatch =
+        !selectedYear || movie.year.toString() === selectedYear || customFilters.some((filter) => filter === movie.year.toString());
+      const ratingMatch =
+        movie.rating >= ratingRange[0] && movie.rating <= ratingRange[1];
+      const customFilterMatch =
+        customFilters.length === 0 ||
+        customFilters.some((filter) =>
+          movie.title.toLowerCase().includes(filter.toLowerCase())
+        );
+
+      return genreMatch && yearMatch && ratingMatch && customFilterMatch;
+    });
+  }, [movies, selectedGenres, selectedYear, ratingRange, customFilters]);
 
   return (
     <div className="container mx-auto px-4 py-8">
@@ -131,6 +137,7 @@ const MovieList = () => {
             Clear All Filters
           </button>
 
+          {/* Genre Chips */}
           <div className="flex gap-2 flex-wrap mb-4">
             {genres.map((genre) => (
               <div
@@ -147,45 +154,38 @@ const MovieList = () => {
             ))}
           </div>
 
-          <div className="flex gap-2 mb-4">
-            {["2023", "2024"].map((year) => (
-              <div
-                key={year}
-                onClick={() => handleYearClick(year)}
-                className={`${
-                  selectedYear === year
-                    ? "bg-blue-600 text-white"
-                    : "bg-gray-800 text-gray-300"
-                } px-4 py-2 rounded-full cursor-pointer transition-colors`}
-              >
-                {year}
-              </div>
-            ))}
+          {/* Custom Filter Input */}
+          <div className="flex items-center gap-2 mb-4">
+            <input
+              type="text"
+              value={inputValue}
+              onChange={handleInputChange}
+              placeholder="Type and press Enter (Year or Actor)"
+              className="w-full px-4 py-2 rounded-lg bg-gray-800 text-white"
+              onKeyDown={(e) => e.key === "Enter" && handleInputSubmit()}
+            />
+            <button
+              onClick={handleInputSubmit}
+              className="bg-blue-600 px-4 py-2 rounded-lg text-white hover:bg-blue-500"
+            >
+              Add
+            </button>
           </div>
 
-          <div className="mb-4">
-            <label className="text-white">Rating Range: {ratingRange[0]} - {ratingRange[1]}</label>
-            <div className="flex gap-1">
-              {[...Array(10)].map((_, i) => (
-                <Star
-                  key={i}
-                  className={`cursor-pointer ${
-                    i + 1 <= ratingRange[0] ? "text-yellow-500" : "text-gray-400"
-                  }`}
-                  onClick={() => handleRatingClick(i + 1, true)}
+          {/* Custom Filter Chips */}
+          <div className="flex gap-2 flex-wrap mb-4">
+            {customFilters.map((filter, index) => (
+              <div
+                key={index}
+                className="flex items-center gap-2 px-4 py-2 rounded-full bg-blue-600 text-white"
+              >
+                {filter}
+                <X
+                  className="cursor-pointer"
+                  onClick={() => handleRemoveChip(filter)}
                 />
-              ))}
-              <span className="text-white">to</span>
-              {[...Array(10)].map((_, i) => (
-                <Star
-                  key={i + 10}
-                  className={`cursor-pointer ${
-                    i + 1 <= ratingRange[1] ? "text-yellow-500" : "text-gray-400"
-                  }`}
-                  onClick={() => handleRatingClick(i + 1, false)}
-                />
-              ))}
-            </div>
+              </div>
+            ))}
           </div>
         </div>
       )}
