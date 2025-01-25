@@ -2,14 +2,18 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { Youtube, Award, Instagram, Star, Twitter } from "lucide-react";
 import { Link, useParams } from "react-router-dom";
+import { AiOutlineHeart, AiFillHeart } from "react-icons/ai";
+import { db } from "../firebase.ts";
+import { doc, setDoc, deleteDoc, getDoc } from "firebase/firestore";
 
 const Actordetails = () => {
   const { id } = useParams();
   const [actor, setActor] = useState<any>(null);
   const [movies, setMovies] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
+  const [isFavorite, setIsFavorite] = useState(false);
 
-  const tmdbAPIKey = "859afbb4b98e3b467da9c99ac390e950"; 
+  const tmdbAPIKey = "859afbb4b98e3b467da9c99ac390e950";
 
   useEffect(() => {
     const fetchActorData = async () => {
@@ -31,6 +35,10 @@ const Actordetails = () => {
           ...prevActor,
           ...socialRes.data,
         }));
+
+        // Check if actor is already in favorites
+        const favoriteDoc = await getDoc(doc(db, "favorites", id!));
+        setIsFavorite(favoriteDoc.exists());
       } catch (error) {
         console.error("Error fetching actor data:", error);
       } finally {
@@ -40,6 +48,22 @@ const Actordetails = () => {
 
     fetchActorData();
   }, [id]);
+
+  const toggleFavorite = async () => {
+    const actorRef = doc(db, "favorites", id!);
+
+    if (isFavorite) {
+      await deleteDoc(actorRef);
+      setIsFavorite(false);
+    } else {
+      await setDoc(actorRef, {
+        name: actor.name,
+        profile_path: actor.profile_path,
+        popularity: actor.popularity,
+      });
+      setIsFavorite(true);
+    }
+  };
 
   if (loading) {
     return <div className="flex justify-center items-center h-screen">Loading...</div>;
@@ -68,6 +92,22 @@ const Actordetails = () => {
               <Star className="w-4 h-4 md:w-5 md:h-5 text-yellow-500" />
               <span>{actor?.popularity} Popularity</span>
             </div>
+            <button
+              onClick={toggleFavorite}
+              className="mt-4 flex items-center gap-2 bg-gray-800 text-white px-4 py-2 rounded-md hover:bg-gray-700 transition"
+            >
+              {isFavorite ? (
+                <>
+                  <AiFillHeart className="text-red-500 w-5 h-5" />
+                  Remove from Favorites
+                </>
+              ) : (
+                <>
+                  <AiOutlineHeart className="text-red-500 w-5 h-5" />
+                  Add to Favorites
+                </>
+              )}
+            </button>
           </div>
         </div>
       </div>

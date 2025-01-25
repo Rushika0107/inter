@@ -355,33 +355,38 @@ const MovieDetails = () => {
         </div>
       </section>
       <section className="my-12 px-4">
-        <h2 className="text-3xl font-bold text-white mb-8 border-b-2 border-gray-700 ">
-          Rate this Movie (/10)
-        </h2>
-        {user ? (
-          <div className="flex flex-col md:flex-row gap-6">
-            <input
-              type="number"
-              className="p-4 w-24 bg-gray-900 text-white rounded-xl text-center shadow-md focus:outline-none focus:ring-2 focus:ring-yellow-500 transition-all"
-              placeholder="0-10"
-              min="0"
-              max="10"
-              value={userRating || ''}
-              onChange={(e) => setUserRating(Number(e.target.value))}
-            />
-            <button
-              onClick={handleRatingSubmit}
-              className="bg-yellow-500 text-black px-8 py-3 rounded-xl font-bold shadow-lg hover:bg-yellow-400 hover:shadow-xl transition-all transform hover:scale-105"
-            >
-              Submit Rating
-            </button>
-          </div>
-        ) : (
-          <p className="text-center text-gray-400 text-lg mt-6">
-            Log in to rate this movie.
-          </p>
-        )}
-      </section>
+  <h2 className="text-3xl font-bold text-white mb-8 border-b-2 border-gray-700">
+    Rate this Movie
+  </h2>
+  {user ? (
+    <div className="flex flex-col md:flex-row gap-6 items-center">
+      <div className="flex gap-2">
+        {[...Array(10)].map((_, index) => (
+          <button
+            key={index}
+            className={`text-3xl ${
+              userRating > index ? 'text-yellow-500' : 'text-gray-400'
+            } hover:text-yellow-500 transition-all`}
+            onClick={() => setUserRating(index + 1)}
+          >
+            ★
+          </button>
+        ))}
+      </div>
+      <button
+        onClick={handleRatingSubmit}
+        className="bg-yellow-500 text-black px-8 py-3 rounded-xl font-bold shadow-lg hover:bg-yellow-400 hover:shadow-xl transition-all transform hover:scale-105"
+      >
+        Submit Rating
+      </button>
+    </div>
+  ) : (
+    <p className="text-center text-gray-400 text-lg mt-6">
+      Log in to rate this movie.
+    </p>
+  )}
+</section>
+
 
 
       <section className="my-12">

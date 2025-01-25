@@ -1,15 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import { Film, Search, Menu, Moon, Sun } from 'lucide-react';
+import { Film, Search, Menu } from 'lucide-react';
 import { Link, useNavigate } from 'react-router-dom';
 
-interface NavbarProps {
-  darkMode: boolean;
-  toggleDarkMode: () => void;
-}
-
-const Navbar: React.FC<NavbarProps> = ({ darkMode, toggleDarkMode }) => {
+const Navbar = ({ toggleTheme, theme }) => {
   const [searchQuery, setSearchQuery] = useState('');
-  const [searchResults, setSearchResults] = useState<any[]>([]); // Replace `SearchResult[]` with `any[]` if needed
+  const [searchResults, setSearchResults] = useState<SearchResult[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -61,8 +56,9 @@ const Navbar: React.FC<NavbarProps> = ({ darkMode, toggleDarkMode }) => {
       navigate(`/actor/${id}`);
     } else if (mediaType === 'tv') {
       navigate(`/tv/${id}`);
-    } else {
-      navigate(`/movie/${id}`);
+    }
+    else {
+      navigate(`/movie/${id}`)
     }
     setSearchQuery('');
     setSearchResults([]);
@@ -75,29 +71,26 @@ const Navbar: React.FC<NavbarProps> = ({ darkMode, toggleDarkMode }) => {
     { label: 'PROFILE', path: '/profile' },
   ];
 
-  const movies = searchResults.filter((result) => result.media_type === 'movie');
-  const tvShows = searchResults.filter((result) => result.media_type === 'tv');
-  const actors = searchResults.filter((result) => result.media_type === 'person');
+  const movies = searchResults.filter(result => result.media_type === 'movie');
+  const tvShows = searchResults.filter(result => result.media_type === 'tv');
+  const actors = searchResults.filter(result => result.media_type === 'person');
 
   return (
     <nav className="bg-gray-900 text-white shadow-md sticky top-0 z-50">
       <div className="max-w-7xl mx-auto px-6 py-3 flex items-center justify-between">
         {/* Logo and Title */}
-        <Link
-          to="/home"
-          className="flex items-center gap-3 text-yellow-400 hover:text-yellow-300 transition duration-200"
-        >
+        <Link to="/home" className="flex items-center gap-3 text-yellow-400 hover:text-yellow-300 transition duration-200">
           <Film className="w-8 h-8 text-yellow-400" />
           <span className="text-3xl font-bold">MovieDB</span>
         </Link>
-
+  
         {/* Mobile Menu Button */}
         <div className="md:hidden">
           <button onClick={() => setIsMenuOpen(!isMenuOpen)}>
             <Menu className="w-7 h-7 text-white" />
           </button>
         </div>
-
+  
         {/* Desktop Navbar Items */}
         <div className="hidden md:flex items-center gap-10">
           <form onSubmit={handleSearch} className="relative w-80">
@@ -109,16 +102,8 @@ const Navbar: React.FC<NavbarProps> = ({ darkMode, toggleDarkMode }) => {
               placeholder="Search movies, TV shows, actors..."
               className="bg-gray-800 text-white pl-10 pr-4 py-2 rounded-full focus:outline-none focus:ring-2 focus:ring-yellow-500 w-full"
             />
-            {loading && (
-              <div className="absolute top-full left-0 w-full bg-black text-white p-2 rounded-b-lg">
-                Loading...
-              </div>
-            )}
-            {error && (
-              <div className="absolute top-full left-0 w-full bg-red-600 text-white p-2 rounded-b-lg">
-                {error}
-              </div>
-            )}
+            {loading && <div className="absolute top-full left-0 w-full bg-black text-white p-2 rounded-b-lg">Loading...</div>}
+            {error && <div className="absolute top-full left-0 w-full bg-red-600 text-white p-2 rounded-b-lg">{error}</div>}
             {searchResults.length > 0 && (
               <ul className="absolute bg-gray-800 text-white w-full rounded-lg shadow-xl max-h-60 overflow-y-auto mt-2">
                 {movies.length > 0 && (
@@ -140,9 +125,7 @@ const Navbar: React.FC<NavbarProps> = ({ darkMode, toggleDarkMode }) => {
                           )}
                           <span className="text-sm font-semibold">{result.title || result.name}</span>
                           {result.media_type === 'movie' && result.release_date && (
-                            <span className="text-xs text-gray-400 ml-2">
-                              ({new Date(result.release_date).getFullYear()})
-                            </span>
+                            <span className="text-xs text-gray-400 ml-2">({new Date(result.release_date).getFullYear()})</span>
                           )}
                         </div>
                       </li>
@@ -180,7 +163,47 @@ const Navbar: React.FC<NavbarProps> = ({ darkMode, toggleDarkMode }) => {
               </ul>
             )}
           </form>
+          <button
+  onClick={toggleTheme}
+  className={`ml-4 px-4 py-2 border rounded-full flex items-center gap-2 
+    ${
+      theme === "dark"
+        ? "bg-gray-800 text-yellow-300 hover:bg-gray-700 border-yellow-300"
+        : "bg-yellow-400 text-gray-900 hover:bg-yellow-500 border-yellow-500"
+    } transition-all duration-300 shadow-md hover:shadow-lg transform hover:scale-105`}
+>
+  {theme === "dark" ? (
+    <>
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        className="h-5 w-5"
+        viewBox="0 0 20 20"
+        fill="currentColor"
+      >
+        <path
+          d="M10 2a1 1 0 100 2 6 6 0 000 12 1 1 0 100 2 8 8 0 110-16z"
+        />
+      </svg>
+      <span>Light Mode</span>
+    </>
+  ) : (
+    <>
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        className="h-5 w-5"
+        viewBox="0 0 20 20"
+        fill="currentColor"
+      >
+        <path
+          d="M10 3a7 7 0 100 14 7 7 0 000-14zm0 2a5 5 0 110 10A5 5 0 0110 5z"
+        />
+      </svg>
+      <span>Dark Mode</span>
+    </>
+  )}
+</button>
 
+          
           {/* Navbar Links */}
           <div className="flex items-center gap-8">
             {navItems.map((item) => (
@@ -193,9 +216,10 @@ const Navbar: React.FC<NavbarProps> = ({ darkMode, toggleDarkMode }) => {
               </Link>
             ))}
           </div>
+          
         </div>
       </div>
-
+  
       {/* Mobile Menu Dropdown */}
       {isMenuOpen && (
         <div className="md:hidden bg-gray-900 text-white p-6">
@@ -209,7 +233,7 @@ const Navbar: React.FC<NavbarProps> = ({ darkMode, toggleDarkMode }) => {
               className="bg-gray-800 text-white pl-10 pr-4 py-2 rounded-full focus:outline-none focus:ring-2 focus:ring-yellow-500 w-full"
             />
           </form>
-
+  
           {navItems.map((item) => (
             <Link
               key={item.label}
@@ -224,6 +248,5 @@ const Navbar: React.FC<NavbarProps> = ({ darkMode, toggleDarkMode }) => {
       )}
     </nav>
   );
-};
-
+}
 export default Navbar;

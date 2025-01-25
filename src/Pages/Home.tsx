@@ -1,6 +1,6 @@
 import React from "react";
 import Hero from "../components/Hero.tsx";
-import { Award, Clock, Star, TrendingUp } from "lucide-react";
+import { Award, User, Star, TrendingUp } from "lucide-react";
 import { Link } from "react-router-dom";
 import MovieCarousel from "../components/MovieCarousel.tsx";
 
@@ -29,9 +29,9 @@ const Home = () => {
                 color: "bg-purple-500",
               },
               {
-                icon: Clock,
-                label: "Coming Soon",
-                path: "/coming-soon",
+                icon: User,
+                label: "FAV actors",
+                path: "/favorites",
                 color: "bg-blue-500",
               },
               {
