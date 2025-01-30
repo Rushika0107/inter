@@ -389,40 +389,10 @@ const MovieDetails = () => {
 
 
 
-      <section className="my-12">
-        <h2 className="text-3xl font-bold text-white mb-8 border-b-2 border-gray-700 ">
-          or write a review!
-        </h2>
-        <div>
-          {movieReviews.map((review, index) => (
-            <div key={index} className="mb-4">
-              <p className="font-semibold">{review.author}</p>
-              <p>{review.content}</p>
-            </div>
-          ))}
-        </div>
-
-        {user && (
-          <div className="mt-6">
-            <textarea
-              className="w-full bg-gray-800 text-white p-4 rounded-md"
-              rows={4}
-              placeholder="Write your review here..."
-              value={userReview}
-              onChange={(e) => setUserReview(e.target.value)}
-            />
-            <button
-              onClick={handleReviewSubmit}
-              className="bg-yellow-500 text-black px-4 py-2 rounded-md mt-4"
-            >
-              Submit Review
-            </button>
-          </div>
-        )}
-      </section>
+      
       {/* Reviews Section */}
       <section className="mb-12">
-        <h2 className="text-2xl font-semibold mb-6">User Reviews</h2>
+        <h2 className="text-2xl font-semibold mb-6"> Reviews</h2>
         {movieDetails?.reviews?.map((review) => (
           <div key={review.id} className="bg-gray-800/50 backdrop-blur-sm rounded-lg p-6 mb-4">
             <h3 className="font-semibold">{review.author}</h3>

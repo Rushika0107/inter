@@ -2,6 +2,7 @@ import { SlidersHorizontal, Star, X, Grid, List } from "lucide-react";
 import React, { useState, useEffect, useMemo } from "react";
 import { Link, useSearchParams } from "react-router-dom";
 
+
 const MovieList = () => {
   const [searchParams] = useSearchParams();
   const search = searchParams.get("search");
@@ -16,6 +17,7 @@ const MovieList = () => {
   const [showFilters, setShowFilters] = useState<boolean>(false);
   const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
   const [inputValue, setInputValue] = useState<string>("");
+  const yearRange = [2000, 2025];
 
   useEffect(() => {
     const fetchData = async () => {
@@ -136,7 +138,7 @@ const MovieList = () => {
           >
             Clear All Filters
           </button>
-
+          
           {/* Genre Chips */}
           <div className="flex gap-2 flex-wrap mb-4">
             {genres.map((genre) => (
