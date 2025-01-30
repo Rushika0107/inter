@@ -14,12 +14,14 @@ import Tvdetails from "./Pages/Tvdetails.tsx";
 import FavoriteActorsPage from "./Pages/FavoriteActorsPage.tsx";
 import { useEffect, useState } from "react";
 
-const AppRoutes = () => {
+const AppRoutes = ({ toggleTheme, theme }) => {
   const location = useLocation();
+  const hideNavbarRoutes = ["/login"];
+  const shouldShowNavbar = !hideNavbarRoutes.includes(location.pathname);
 
   return (
     <>
-      {location.pathname !== "/login" }
+      {shouldShowNavbar && <Navbar toggleTheme={toggleTheme} theme={theme} />}
       <Routes>
         <Route path="/login" element={<LoginPage />} />
         <Route path="/home" element={<Home />} />
@@ -29,7 +31,7 @@ const AppRoutes = () => {
         <Route path="/movies" element={<MovieList />} />
         <Route path="/movie/:id" element={<MovieDetails />} />
         <Route path="/actor/:id" element={<Actordetails />} />
-        <Route path="tv/:id" element={<Tvdetails />} />
+        <Route path="/tv/:id" element={<Tvdetails />} />
         <Route path="/favorites" element={<FavoriteActorsPage />} />
         <Route path="/top-rated" element={<Toprated />} />
       </Routes>
@@ -60,8 +62,7 @@ function App() {
           theme === "dark" ? "bg-black text-white" : "bg-white text-black"
         } transition-all duration-500`}
       >
-        <Navbar toggleTheme={toggleTheme} theme={theme} />
-        <AppRoutes />
+        <AppRoutes toggleTheme={toggleTheme} theme={theme} />
       </div>
     </BrowserRouter>
   );
